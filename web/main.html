@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <script type="text/javascript" src="/eel.js"></script>
+  <title></title>
+
+  <script src="https://cdn.bootcss.com/FileSaver.js/2014-11-29/FileSaver.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/eel.js"></script>
+
+  <script>
+
+    function analyseHandler(){
+      var name1 = "";
+      var ethn1 = "";
+      var crime1 = "";
+      var birthplace1 = "";
+      var courts1 =  "";
+      
+      for(i=0;i<20;i++){
+        if(document.getElementById("4input" + i + "")!=null){
+            if(document.getElementById("4input" + i + "").checked){
+                if(document.getElementById("4input" + i + "").value.match("族")){
+                  ethn1 = document.getElementById("4input" + i + "").value;
+                }
+                else if(document.getElementById("4input" + i + "").value.match("法院")){
+                  courts1 = courts1 + document.getElementById("4input" + i + "").value + ",";
+                }
+            }
+        }
+      }
+      
+      for(i=0;i<20;i++){
+        if(document.getElementById("1input" + i + "")!=null){
+            if(document.getElementById("1input" + i + "").checked && name1==""){
+                name1 = document.getElementById("1input" + i + "").value;
+            }
+            else if(document.getElementById("1input" + i + "").checked){
+              birthplace1 = birthplace1 + document.getElementById("1input" + i + "").value;
+            }
+        }
+      }
+
+      for(i=0;i<20;i++){
+        if(document.getElementById("2input" + i + "")!=null){
+            if(document.getElementById("2input" + i + "").checked){
+                crime1 = document.getElementById("2input" + i + "").value;
+            }
+        }
+      }
+
+      let inputObj1 = document.getElementById('name');
+      inputObj1.value = name1;
+      let inputObj2 = document.getElementById('ethn');
+      inputObj2.value = ethn1;
+      let inputObj3 = document.getElementById('crime');
+      inputObj3.value = crime1;
+      let inputObj4 = document.getElementById('birthplace');
+      inputObj4.value = birthplace1;
+      let inputObj5 = document.getElementById('courts');
+      inputObj5.value = courts1;
+    }
+  </script>
+
+  <script>
+    
+    function saveHandler(){
+      var name1 = document.getElementById('name').value;
+      var gender1 = "";
+      var ethn1 = document.getElementById('ethn').value;
+      var crime1 = document.getElementById('crime').value;
+      var birthplace1 = document.getElementById('birthplace').value;
+      var courts1 =  document.getElementById('courts').value;
+
+      if(document.getElementById("sexmale").checked){
+        gender1 = "男";
+      }
+      else if(document.getElementById("sexwoman").checked){
+        gender1 = "女";
+      }
+
+         let data = {
+             name:name1,
+             gender:gender1,
+             ethnicity:ethn1,
+             birthplace:birthplace1,
+             crime:crime1,
+             courts1:courts1,
+
+         }
+         var content = JSON.stringify(data);
+         var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+         saveAs(blob, "save.json");
+
+        var content2 = document.getElementById("txt1").value;
+        var blob2 = new Blob([content2], {type: "text/plain;charset=utf-8"});
+        saveAs(blob2, "save2.txt");
+    }
+    
+   </script>
+
+  <script>
+    // 调用python中的函数,注意需要在定义前加上async声明异步
+    async function doThis(){    
+        var par = document.getElementById("txt1").value;
+        document.getElementById('renming').innerHTML = "";
+        document.getElementById('mingci').innerHTML = "";
+        document.getElementById('dongci').innerHTML = "";
+        document.getElementById('xingrongci').innerHTML = "";
+        
+        let content1 = await eel.py_fun1(par)();  //这里用let不用var,调用的python函数后面是两对括号
+        var contents1 = content1.split("/");
+        for(i=0;i<contents1.length;i++){
+          var newInput = document.createElement("input");  
+          newInput.type = "checkbox";
+          newInput.id = "1input" + i + "";
+          newInput.value = contents1[i];
+          var newform = document.createElement("input");  
+          newform.type = "text";
+          newform.size = "10";
+          newform.value = contents1[i];
+          var TemO=document.getElementById("renming"); 
+          TemO.appendChild(newInput); 
+          TemO.appendChild(newform); 
+          if((i+1)%5==0){
+            TemO.append("\n");
+          }
+        }
+
+        let content2 = await eel.py_fun2(par)();
+        var contents2 = content2.split("/");
+        for(i=0;i<contents2.length;i++){
+          var newInput = document.createElement("input");  
+          newInput.type = "checkbox";
+          newInput.id = "2input" + i + "";
+          newInput.value = contents2[i];
+          var newform = document.createElement("input");  
+          newform.type = "text";
+          newform.size = "10";
+          newform.value = contents2[i];
+          var TemO=document.getElementById("dongci"); 
+          TemO.appendChild(newInput); 
+          TemO.appendChild(newform); 
+          if((i+1)%5==0){
+            TemO.append("\n");
+          }
+        }
+        
+        let content3 = await eel.py_fun3(par)();  //这里用let不用var,调用的python函数后面是两对括号
+        var contents3 = content3.split("/");
+        for(i=0;i<contents3.length;i++){
+          var newInput = document.createElement("input");  
+          newInput.type = "checkbox";
+          newInput.id = "3input" + i + "";
+          newInput.value = contents3[i];
+          var newform = document.createElement("input");  
+          newform.type = "text";
+          newform.size = "10";
+          newform.value = contents3[i];
+          var TemO=document.getElementById("xingrongci"); 
+          TemO.appendChild(newInput); 
+          TemO.appendChild(newform); 
+          if((i+1)%5==0){
+            TemO.append("\n");
+          }
+        }
+
+        let content4 = await eel.py_fun4(par)();  //这里用let不用var,调用的python函数后面是两对括号
+        var contents4 = content4.split("/");
+        for(i=0;i<contents4.length;i++){
+          var newInput = document.createElement("input");  
+          newInput.type = "checkbox";
+          newInput.id = "4input" + i + "";
+          newInput.value = contents4[i];
+          var newform = document.createElement("input");  
+          newform.type = "text";
+          newform.size = "10";
+          newform.value = contents4[i];
+          var TemO=document.getElementById("mingci"); 
+          TemO.appendChild(newInput); 
+          TemO.appendChild(newform); 
+          if((i+1)%5==0){
+            TemO.append("\n");
+          }
+        }
+    }
+  </script>
+
+  <script>
+      function test(){
+        var div = document.getElementById("test").value;
+        var div1=document.getElementById("renming");
+        var div4=document.getElementById("mingci");
+        var div2=document.getElementById("dongci");
+        var div3=document.getElementById("xingrongci");
+        if(div=="person"){
+          div1.style.display = "block";
+          div2.style.display = "none";
+          div3.style.display = "none";
+          div4.style.display = "none";
+        }
+        else if(div=="verb"){
+          div1.style.display = "none";
+          div2.style.display = "block";
+          div3.style.display = "none";
+          div4.style.display = "none";
+        }
+        else if(div=="adj"){
+          div1.style.display = "none";
+          div2.style.display = "none";
+          div3.style.display = "block";
+          div4.style.display = "none";
+        }
+        else if(div=="noun"){
+          div1.style.display = "none";
+          div2.style.display = "none";
+          div3.style.display = "none";
+          div4.style.display = "block";
+        }
+      }
+  </script>
+
+  <script type="text/javascript"> 
+      var result=document.getElementById("result"); 
+      var file=document.getElementById("fileInput"); 
+      //判断浏览器是否支持FileReader接口 
+      if(typeof FileReader == 'undefined'){ 
+          result.InnerHTML="<p>你的浏览器不支持FileReader接口！</p>"; 
+          //使选择控件不可操作 
+          file.setAttribute("disabled","disabled"); 
+      } 
+      
+      function readAsText(){ 
+          var file = document.getElementById("file").files[0]; 
+          var reader = new FileReader(); 
+          //将文件以文本形式读入 
+          reader.readAsText(file); 
+          reader.onload=function(f){ 
+            var result=document.getElementById("result"); 
+            //显示文件 
+            let inputObj = document.getElementById('txt1');
+            inputObj.value = this.result;
+          } 
+      } 
+      
+  </script> 
+
+  <script>
+          function getTXT(){
+				   //第一种方法
+				   var temp=document.getElementById("txt1").value;   //注意引号内的内容应该是文本框的id而不能是name
+				   window.alert(temp);
+				}
+  </script>
+  
+</head>
+<body>
+
+  
+  <style>
+    .box{
+        width: 1800px;
+        height: 1000px;
+        background: darkgray;
+      }
+      .left-box,.right-box{
+        width: 50%;
+        height: 100%;
+        float: left;
+      }
+      .left-box{
+        background: white;
+      }
+      .right-box{
+        background: white;
+      }
+
+  </style>
+
+
+<div class="box">
+  <div class="left-box">
+    <form method="post">
+      <input type="button" value="爬取案件"/>
+  </form>
+
+  <form action="time">
+  开始日期：<input type = "date" name = "start" id = "start">
+  结束日期：<input type = "date" name = "end" id = "end">
+  </form>
+  <br>
+
+  <label>请选择一个文件：</label> 
+      <input type="file" id="file" /> 
+      <input type="button" value="读取文本文件" onclick="readAsText()" /> 
+    </p> 
+  <div id="result" name="result"></div> 
+
+  <form method="post">
+      内容：<br/>
+      <textarea name= "txt1" id = "txt1" rows="35" cols="100">请</textarea>
+    <br/>
+  </form>
+  </div>
+
+  <div class="right-box">
+    <div class="card-body">
+      <button class="btn btn-lg btn-success" onclick="doThis()">开始批注</button>
+    </div>
+  
+  
+    <select id="test" onchange="test()">
+      <option value ="person">重要信息</option>
+      <option value ="noun">名词</option>
+      <option value ="verb">动词</option>
+      <option value ="adj">形容词</option>
+    </select>
+
+    <form action="" method="get" name="frm"> 
+        <div id="renming" style="display:block;white-space: pre-line;"> 
+          
+        </div> 
+        <div id="mingci" style="display:none;white-space: pre-line;">
+
+        </div>
+        <div id="dongci" style="display:none;white-space: pre-line;">
+
+        </div>
+        <div id="xingrongci" style="display:none;white-space: pre-line;">
+
+        </div>
+    </form>
+
+    <input type="button" id="analy" value="分析选择的数据" onclick="analyseHandler()"/><br>
+
+    <font size="6"> 犯人信息提取：</font><br/>
+    <font size="5"> 姓名：</font><input type="text" id="name" value=""><br>
+    <font size="5"> 性别：</font><input type ="checkbox" id = "sexmale" value = "男" style="zoom:150%;">男性<input type ="checkbox" id = "sexwoman" value = "女" style="zoom:150%;">女性<br>
+    <font size="5"> 民族：</font><input type="text" id="ethn" value=""><br>
+    <font size="5"> 罪行：</font><input type="text" id="crime" value=""><br>
+    <font size="5"> 出生地：</font><input type="text" id="birthplace" value=""><br>
+    <font size="5"> 相关法院：</font><input type="text" id="courts" value="" style="width:600px;"><br>
+    <input type="button" id="export" value="保存" onclick="saveHandler()"/>
+  </div>
+</div>
+</body>
+</html>
